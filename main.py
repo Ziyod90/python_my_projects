@@ -1,5 +1,8 @@
-def my_function():
-    print('Привет от python')
+# Пример простейшей функции с параметром
+
+def my_function(name):
+    print(f'Привет, {name}')
 
 
-my_function()
+# При вызове функция получает аргумент
+my_function('Вася')
