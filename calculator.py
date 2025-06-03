@@ -1,17 +1,14 @@
-def calculation(a, b):
-    summa = a + b
-    diff = a - b
-    mul = a * b
-    div = a / b
+def bmi(h, w):
+    bmi = w / (h / 100) ** 2
+    if bmi <= 18.5:
+        return 'У вас дефицит веса'
+    elif bmi <=24.9:
+        return 'Вес в норме'
+    elif bmi <= 29.9:
+        return 'Есть лишный вес'
+    else:
+        return 'Срочно на диету!'
 
-    return summa, diff, mul, div
-
-num1, num2 = int(input()), int(input())
-summa, diff, mul, div = calculation(num1, num2)
-
-print(
-    f'Сумма: {summa}\n'
-    f'Разница: {diff}\n'
-    f'Произведение: {mul}\n'
-    f'Резултат деления: {div:.2f}\n'
-)
+h = float(input('Введите рост в см: '))
+w = float(input('Введите вес в кг: '))
+print(bmi(h, w))
