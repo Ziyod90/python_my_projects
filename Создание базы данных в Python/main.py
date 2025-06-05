@@ -8,7 +8,10 @@ cursor = conn.cursor() # Создать объект курсора
 cursor.execute("""CREATE TABLE IF NOT EXISTS users(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
-                age INTEGER
+                age INTEGER,
+                surname TEXT,
+                faculty TEXT,
+                city TEXT
                 )""") # Создать таблицу в базе данных:
 
 conn.close() # Закрыть соединение с базой данных
@@ -54,17 +57,68 @@ def adding_records_to_the_database(name, age, surname, faculty, city):
     conn.close()
 
 
+def update_user_interactive():
+    conn = sqlite3.connect('MyDB.db')
+    cursor = conn.cursor()
+
+    user_id = input("Введите ID пользователя, которого хотите обновить: ")
+
+    # Получим текущие данные пользователя (для проверки)
+    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    user = cursor.fetchone()
+
+    if not user:
+        print("❌ Пользователь с таким ID не найден.")
+        conn.close()
+        return
+
+    print(f"\n🔍 Текущие данные пользователя: {user}\n")
+
+    # Предложим выбор поля для обновления
+    fields = ["name", "age", "surname", "faculty", "city"]
+    print("Выберите поле для обновления:")
+    for i, field in enumerate(fields, start=1):
+        print(f"{i}. {field}")
+
+    choice = int(input("Введите номер поля (1-5): "))
+    if choice < 1 or choice > len(fields):
+        print("❌ Неверный выбор.")
+        conn.close()
+        return
+
+    field_to_update = fields[choice - 1]
+    new_value = input(f"Введите новое значение для поля '{field_to_update}': ")
+
+    # Приведение типа, если это возраст
+    if field_to_update == "age":
+        try:
+            new_value = int(new_value)
+        except ValueError:
+            print("❌ Возраст должен быть числом.")
+            conn.close()
+            return
+
+    # Обновляем поле
+    cursor.execute(f"UPDATE users SET {field_to_update} = ? WHERE id = ?", (new_value, user_id))
+    conn.commit()
+    conn.close()
+
+    print(f"✅ Поле '{field_to_update}' успешно обновлено для пользователя с ID = {user_id}.")
+
+
 def main():
-    print('Для просмотра таблиц 2\nДля записа БД 1')
+    print('для отображения всех записей из базы данных нажмите 1\nДля записа в БД нажмите 2\nДля обновление данных в БД нажмите 3')
     x = int(input('1-2: '))
-    if x == 1:
+    if x == 2:
         adding_records_to_the_database(name=input('Введите имя: '),
                                        age=int(input('Введите возраст: ')),
                                        surname=input('Введите фамилию: '),
                                        faculty=input('faculty: '),
                                        city=input('Введите свой город: '))
-    elif x == 2:
+    elif x == 1:
         show_tables_name()
+    elif x == 3:
+        update_user_interactive()
 
 
 if __name__ == "__main__":
